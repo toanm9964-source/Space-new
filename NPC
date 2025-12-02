@@ -1,0 +1,174 @@
+=== NPC SYSTEM ===
+
+NPC_DAMAGE_FORMULA:
+  hit_chance: "HitChance = WeaponAccuracy * (1 - TargetEvasion), min = 20%"
+  armor_reduction: "DamageAfterArmor = BaseDamage * (1 - Armor/400), clamp 5% – 60%"
+  crit: "CritDamage = BaseDamage * 1.5 if crit_chance success"
+  shield: "Damage applies to shield first, leftover hits hull"
+  missile_bonus: "Missiles ignore 20% armor"
+  drone_multi_hit: "Drones deal multiple rapid small hits"
+
+NPC_BEHAVIOR_SYSTEM:
+  behavior_types:
+
+    aggressive:
+      description: "Lao thẳng vào kẻ địch, ưu tiên mục tiêu lớn"
+      priority:
+        - attack_closest_enemy
+        - focus_fire_on_big_ships
+      modifiers:
+        damage: +10%
+        evasion: -5%
+
+    defensive:
+      description: "Giữ khoảng cách, ưu tiên sống sót"
+      priority:
+        - target_lowest_damage_enemy
+        - retreat_if_hp_below_30_percent
+      modifiers:
+        hp: +10%
+        evasion: +10%
+
+    opportunist:
+      description: "Chỉ tấn công khi có lợi"
+      priority:
+        - avoid_stronger_fleet
+        - attack_weakened_targets
+      modifiers:
+        damage_to_low_hp_targets: +25%
+
+    raider:
+      description: "Chuyên đánh nhanh – rút nhanh"
+      priority:
+        - attack_station
+        - hit_and_run
+      modifiers:
+        speed: +20%
+        shield: -10%
+
+    escort:
+      description: "NPC hộ tống, bảo vệ tàu lớn"
+      priority:
+        - defend_capital_ship
+        - intercept_enemy_drones
+      modifiers:
+        damage_to_drones: +30%
+
+NPC_ACTIONS_RANDOM:
+  actions:
+    - patrol_area
+    - warp_to_random_system
+    - defend_resource_zone
+    - attack_player_if_close
+    - retreat_to_station
+    - pirate_ambush
+    - explore_unknown_region
+    - escort_civilian_convoy
+    - scan_player_fleet
+    - request_alliance_help
+
+  random_chance:
+    patrol_area: 25%
+    attack_player_if_close: 15%
+    pirate_ambush: 10%
+    retreat_to_station: 10%
+    explore_unknown_region: 20%
+    escort_civilian_convoy: 10%
+    warp_to_random_system: 10%
+
+NPC_FACTIONS:
+  - id: 1
+    name: "Void Marauders"
+    style: "Raider"
+    ship_focus: "Small & Light Ships"
+    bonus: { speed: +15%, evasion: +10% }
+    hostility: high
+
+  - id: 2
+    name: "Zenoth Empire"
+    style: "Aggressive"
+    ship_focus: "Battleships & Dreadnoughts"
+    bonus: { damage: +10%, hp: +10% }
+    hostility: very_high
+
+  - id: 3
+    name: "Arkos Union"
+    style: "Defensive"
+    ship_focus: "Medium Ships"
+    bonus: { shield: +15%, evasion: +5% }
+    hostility: medium
+
+  - id: 4
+    name: "Neon Traders"
+    style: "Opportunist"
+    ship_focus: "Mixed"
+    bonus: { trade: +25%, retreat_speed: +20% }
+    hostility: low
+
+  - id: 5
+    name: "Eclipse Collective"
+    style: "Escort"
+    ship_focus: "Drone Carriers"
+    bonus: { drone_damage: +20%, detection: +15% }
+    hostility: selective
+
+NPC_SHIP_STATS:
+  small:
+    hp: 80
+    shield: 60
+    armor: 20
+    evasion: 0.20
+    ai_behavior: "raider, opportunist"
+
+  light:
+    hp: 150
+    shield: 120
+    armor: 40
+    evasion: 0.15
+    ai_behavior: "patrol, defend"
+
+  medium:
+    hp: 350
+    shield: 300
+    armor: 80
+    evasion: 0.10
+    ai_behavior: "balanced"
+
+  battleship:
+    hp: 800
+    shield: 600
+    armor: 140
+    evasion: 0.05
+    ai_behavior: "aggressive"
+
+  dreadnought:
+    hp: 1700
+    shield: 1000
+    armor: 240
+    evasion: 0.02
+    ai_behavior: "defensive, escort"
+
+NPC_WEAPON_PRESETS:
+  cannon:
+    damage: 120
+    accuracy: 0.75
+    fire_rate: 0.8
+    bonus_vs_large: +20%
+
+  laser:
+    damage: 90
+    accuracy: 0.90
+    fire_rate: 1.4
+    bonus_vs_shield: +40%
+
+  missile:
+    damage: 180
+    accuracy: 0.65
+    fire_rate: 0.5
+    ignore_armor: 20%
+
+  drone:
+    damage: 40
+    accuracy: 0.85
+    fire_rate: 3.0
+    bonus_vs_small: +20%
